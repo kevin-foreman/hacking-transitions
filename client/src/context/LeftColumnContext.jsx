@@ -93,6 +93,15 @@ export const LeftColumnProvider = ({children}) => {
         toggleDropDown,
         openDropDown,
         students
+=======
+        addCohortClicked,
+        openAddCohort,
+        closeAddCohort,
+        editCohortClicked,
+        openEditCohort,
+        closeEditCohort,
+        cohorts
+>>>>>>> 4a33dc3 (added map for the cohorts, there is a cors issue)
     }}>
         {children}
     </LeftColumnContext.Provider>
