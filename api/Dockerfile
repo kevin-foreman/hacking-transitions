@@ -5,6 +5,10 @@ WORKDIR /code
 COPY package*.json .
 RUN npm ci
 COPY . .
+<<<<<<< HEAD
 RUN npm run heroku-postbuild
+=======
+# RUN npm run heroku-postbuild
+>>>>>>> f51f2e1 (Updated local for heroku final)
 EXPOSE 3000
 CMD ["npm", "start"]
