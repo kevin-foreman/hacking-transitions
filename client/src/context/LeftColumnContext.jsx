@@ -3,6 +3,7 @@ import React, {createContext, useEffect, useState} from "react";
 const LeftColumnContext = createContext();
 
 export const LeftColumnProvider = ({children}) => {
+<<<<<<< HEAD
     const [dropDownClicked, setDropDownClicked] = useState("");
     const [cohortClicked, setCohortClicked] = useState("");
     const [cohorts, setCohorts] = useState([]);
@@ -13,6 +14,28 @@ export const LeftColumnProvider = ({children}) => {
     const handleDropClicked = (value, id) =>{
         if(dropDownClicked === value){
             setDropDownClicked("")    
+=======
+    const [dropDownClicked, setDropDownClicked] = useState(false);
+    const [cohortClicked, setCohortClicked] = useState(false);
+    const [addCohortClicked, setAddChohortClicked] = useState(false);
+    const [editCohortClicked, setEditCohortClicked] = useState(false);
+    const [cohorts, setCohorts] = useState([]);
+    const openAddCohort = () => {
+        setAddChohortClicked(true);
+    }
+    const closeAddCohort = () => {
+        setAddChohortClicked(false);
+    }
+    const openEditCohort = () => {
+        setEditCohortClicked(true);
+    }
+    const closeEditCohort = () => {
+        setEditCohortClicked(false);
+    }
+    const handleDropClicked = () =>{
+        if(dropDownClicked){
+            setDropDownClicked(false);
+>>>>>>> 4a33dc3 (added map for the cohorts, there is a cors issue)
         }else{
             setDropDownClicked(value)
             setcohortId(id)
@@ -49,6 +72,8 @@ export const LeftColumnProvider = ({children}) => {
             setOpenDropdown(cohortId);
         }
 <<<<<<< HEAD
+    };
+=======
     }
     useEffect(() => {
         fetch('http://localhost:8000/api/cohorts')
@@ -56,9 +81,7 @@ export const LeftColumnProvider = ({children}) => {
             .then(data => setCohorts(data))
             .catch(error => console.log(error));
     }, []);
-=======
-    };
->>>>>>> develop
+>>>>>>> 4a33dc3 (added map for the cohorts, there is a cors issue)
 
     return( <LeftColumnContext.Provider value = {{
         dropDownClicked,
@@ -66,19 +89,10 @@ export const LeftColumnProvider = ({children}) => {
         cohortClicked, 
         handleCohortClicked,
 <<<<<<< HEAD
-        addCohortClicked,
-        openAddCohort,
-        closeAddCohort,
-        editCohortClicked,
-        openEditCohort,
-        closeEditCohort,
-        cohorts
-=======
         cohorts,
         toggleDropDown,
         openDropDown,
         students
->>>>>>> develop
     }}>
         {children}
     </LeftColumnContext.Provider>
