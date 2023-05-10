@@ -10,6 +10,7 @@ export const LeftColumnProvider = ({children}) => {
     const [students, setStudents] = useState([]);
     const [cohortId, setcohortId] = useState(1);
     const [cohortIdForInfo, setCohortIdForInfo] = useState(1);
+    const [studentClicked, setStudentClicked] = useState("");
 
     const handleDropClicked = (value, id) =>{
         if(dropDownClicked === value){
@@ -28,6 +29,14 @@ export const LeftColumnProvider = ({children}) => {
             setCohortIdForInfo(id)   
         } 
     }
+
+    // const handleStudentClicked = (student, id) => {
+    //     if(studentClicked === student){
+    //         setStudentClicked("")
+    //     } else {
+    //         setStudentClicked
+    //     }
+    // }
     
     useEffect(() => {
         fetch('http://localhost:8000/api/cohorts')

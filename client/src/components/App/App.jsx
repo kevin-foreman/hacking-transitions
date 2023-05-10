@@ -8,13 +8,13 @@ import LeftColumnContext from "../../context/LeftColumnContext";
 
 const App = () => {
 
-  const { cohortClicked } = useContext(LeftColumnContext);
+  const { cohortClicked, openDropDown } = useContext(LeftColumnContext);
 
   return (
     <>
       <Header />
       <LeftColumn />
-      {/* <StudentDetail /> */}
+      {openDropDown !== null ? <StudentDetail /> : <></>}
       {cohortClicked !== "" ? <CohortDetails /> : <></>}
       <Footer />
     </>

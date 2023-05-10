@@ -7,9 +7,12 @@ function LeftColumnNames(){
     return (
         <>
             {students.map((student, index) => {
+                let fullName = "";
+                (student.middlename) ? fullName = `${student.firstname}  ${student.middlename}  ${student.lastname}` : fullName = `${student.firstname}  ${student.lastname}`
+                           
                 return(                
                 <div key={index} className="leftColumnNames">
-                    <div className="LCName">{student.firstname} {student.lastname}</div>
+                    <div className="LCName" onClick={() => handleStudentClicked(fullName ,student.id - 1)}>{fullName}</div>
                 </div>
                 )
             })}

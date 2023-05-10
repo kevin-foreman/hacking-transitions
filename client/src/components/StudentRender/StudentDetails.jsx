@@ -1,20 +1,21 @@
-import React from 'react';
-import tempData from './StudentDetailsTempData'
+import React, { useContext } from 'react';
 import '../../styles/StudentDetails.css'
+import LeftColumnContext from "../../context/LeftColumnContext";
 
 const StudentDetail = () => {
-    const studentName = tempData[0]; 
-    const studentBranch = tempData[1];
-    const studentStatus = tempData[2];
-    const currentTasks = tempData[3];
-    const toDoTasks = tempData[4];    
+    
+    const {openDropDown, students} = useContext(LeftColumnContext)
+
+    console.log("openDropDown state = ", openDropDown);
+    console.log("students state = ", students);
 
     return (
         <div
             id='detailsmain'
             className='studentDetails'
-        > 
-            <table>
+        >
+            <h1 className='select-student'>PLEASE SELECT A STUDENT FROM THE DROPDOWN</h1> 
+            {/* <table>
                 <tbody>
                     <tr>
                         <td
@@ -62,7 +63,7 @@ const StudentDetail = () => {
                         {toDoTasks}</td>
                     </tr>
                 </tbody>
-            </table>
+            </table> */}
         </div>
     )
 }

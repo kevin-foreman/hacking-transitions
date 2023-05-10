@@ -7,9 +7,9 @@ const CohortDetails = () => {
 
     const { cohortClicked, cohortIdForInfo, cohorts } = useContext(LeftColumnContext);
 
-    console.log("cohorts ", cohorts);
-    console.log("cohort-clicked", cohortClicked);
-    console.log('cohortId', cohortIdForInfo);
+    console.log("cohorts state = ", cohorts);
+    console.log("cohort-clicked state = ", cohortClicked);
+    console.log('cohortIdForInfo state = ', cohortIdForInfo);
 
 
     return (
