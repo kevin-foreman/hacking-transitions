@@ -3,9 +3,9 @@ services:
   database:
     image: postgres:15-alpine
     environment:
-      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}$
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}$
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}$
     ports:
       - 5432:5432
     volumes:
@@ -18,13 +18,13 @@ services:
     restart: always
     build: ./api
     environment:
-      DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database/${{ secrets.POSTGRES_DB }}
+      DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}$:${{ secrets.POSTGRES_PASSWORD }}$@database/${{ secrets.POSTGRES_DB }}$
       NODE_ENV: development
       PORT: 80
     depends_on:
       - database
     ports:
-      - ${{ secrets.API_PORT }}:80
+      - ${{ secrets.API_PORT }}$:80
     volumes:
       - ./api/src:/code/src
     command: npm run dev
@@ -35,11 +35,11 @@ services:
     build: ./client
     environment:
       API_URL: http://api
-      PORT: ${{ secrets.CLIENT_PORT }}
+      PORT: ${{ secrets.CLIENT_PORT }}$
     depends_on:
       - api
     ports:
-      - ${{ secrets.CLIENT_PORT }}:${{ secrets.CLIENT_PORT }}
+      - ${{ secrets.CLIENT_PORT }}$:${{ secrets.CLIENT_PORT }}$
     volumes:
       - ./client/src:/code/src
     command: npm run dev
