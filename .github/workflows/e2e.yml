@@ -15,10 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build Docker images
-        run: docker-compose --env-file .env build
-      - name: Start Docker Compose
-        run: docker-compose -d
+      - name: Build and run Docker Compose
+        run: docker-compose --env-file ${{ github.workspace }}/.env up --build
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with: 
