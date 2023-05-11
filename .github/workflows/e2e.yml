@@ -36,6 +36,6 @@ jobs:
         with:
           start: npm run cy:run
           wait-on: 'http://localhost:${{ secrets.CLIENT_PORT }}'
-          env:
-            CYPRESS_baseUrl: http://localhost:${{ secrets.CLIENT_PORT }}
-            CYPRESS_databaseUrl: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:${{ secrets.POSTGRES_PORT }}/${{ secrets.POSTGRES_DB }}
+        env:
+          CYPRESS_baseUrl: http://localhost:${{ secrets.CLIENT_PORT }}
+          CYPRESS_databaseUrl: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:${{ secrets.POSTGRES_PORT }}/${{ secrets.POSTGRES_DB }}
