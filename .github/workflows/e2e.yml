@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build Docker images
-        run: docker-compose build
+        run: docker-compose -f .env build
       - name: Start Docker Compose
         run: docker-compose -d
       - name: Cypress run
