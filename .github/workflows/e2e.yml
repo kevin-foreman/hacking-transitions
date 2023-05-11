@@ -2,26 +2,74 @@ name: e2e testing
 
 on: push
 
-env:
-  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-  POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-  CLIENT_PORT: ${{ secrets.CLIENT_PORT }}
-  API_PORT: ${{ secrets.API_PORT }}
-
 jobs:
-  cypress-run:
-    runs-on: ubuntu-22.04
+  e2e-test:
+    runs-on: ubuntu-latest
+
+    services:
+      database:
+        image: postgres:15-alpine
+        ports:
+          - 5432:5432
+        volumes:
+          - pg-data:/var/lib/postgresql/data
+          - ./api/src/db/migration.sql:/docker-entrypoint-initdb.d/migration.sql
+          - ./api/src/db/seed.sql:/docker-entrypoint-initdb.d/seed.sql
+
+      api:
+        image: hacking-transitions-19/api
+        container_name: api-1
+        restart: always
+        build: ./api
+        environment:
+          DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database/${{ secrets.POSTGRES_DB }}
+          NODE_ENV: test
+          PORT: 80
+        depends_on:
+          - database
+        ports:
+          - ${{ secrets.API_PORT }}:80
+        volumes:
+          - ./api/src:/code/src
+        command: npm run start:test
+
+      app:
+        image: hacking-transitions-19/web
+        container_name: app-1
+        restart: always
+        build: ./client
+        environment:
+          API_URL: http://api
+          PORT: ${{ secrets.CLIENT_PORT }}
+        depends_on:
+          - api
+        ports:
+          - ${{ secrets.CLIENT_PORT }}:${{ secrets.CLIENT_PORT }}
+        volumes:
+          - ./client/src:/code/src
+        command: npm run start:test
+
+    env:
+      CYPRESS_baseUrl: http://localhost:${{ secrets.CLIENT_PORT }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up Docker
-        uses: docker/setup-docker@v1
-      - name: Build and run Docker Compose
-        run: docker-compose -f docker-compose.test.yml up --build
-      - name: Cypress run
-        uses: cypress-io/github-action@v5
-        with: 
-          start: wait-on http://localhost:${{ secrets.CLIENT_PORT }} && npm run cypress:run
-      - name: Stop Docker Compose
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Wait for API and App to be ready
+        run: npx wait-on http://localhost:${{ secrets.API_PORT }} http://localhost:${{ secrets.CLIENT_PORT }}
+
+      - name: Run E2E tests
+        uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+          spec: cypress/integration/**/*.spec.js
+
+      - name: Cleanup
         run: docker-compose down
+
+volumes:
+  pg-data:
