@@ -4,9 +4,9 @@ on: push
 
 
 jobs:
-  e2e-test:
+  e2e:
+    name: End-to-end Tests
     runs-on: ubuntu-latest
-
     services:
       database:
         image: postgres:15-alpine
@@ -16,54 +16,50 @@ jobs:
           - pg-data:/var/lib/postgresql/data
           - ./api/src/db/migration.sql:/docker-entrypoint-initdb.d/migration.sql
           - ./api/src/db/seed.sql:/docker-entrypoint-initdb.d/seed.sql
-
       api:
         image: hacking-transitions-19/api
+        restart: always
+        build:
+          context: ./api
         environment:
           DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database/${{ secrets.POSTGRES_DB }}
-          NODE_ENV: test
+          NODE_ENV: development
           PORT: 80
+        depends_on:
+          - database
         ports:
           - ${{ secrets.API_PORT }}:80
         volumes:
+          # This allows live reload inside a docker container by mapping your
+          # filesystem to the container's.
           - ./api/src:/code/src
-        command: npm run start:test
-
+        command: npm run dev
       app:
         image: hacking-transitions-19/web
+        restart: always
+        build:
+          context: ./client
         environment:
           API_URL: http://api
           PORT: ${{ secrets.CLIENT_PORT }}
+        depends_on:
+          - api
         ports:
           - ${{ secrets.CLIENT_PORT }}:${{ secrets.CLIENT_PORT }}
         volumes:
+          # This allows live reload inside a docker container by mapping your
+          # filesystem to the container's.
           - ./client/src:/code/src
-        command: npm run start:test
-
-    env:
-      CYPRESS_baseUrl: http://localhost:${{ secrets.CLIENT_PORT }}
-
+        command: npm run dev
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Wait for API and App to be ready
-        run: npx wait-on http://localhost:${{ secrets.API_PORT }} http://localhost:${{ secrets.CLIENT_PORT }}
-
-      - name: Run E2E tests
+      - name: Run Cypress end-to-end tests
         uses: cypress-io/github-action@v2
         with:
-          browser: chrome
-          spec: cypress/integration/**/*.spec.js
-        env:
-          CYPRESS_baseUrl: http://localhost:${{ secrets.CLIENT_PORT }}
-          CYPRESS_apiUrl: http://localhost:${{ secrets.API_PORT }}
-
-      - name: Cleanup
-        run: docker-compose down
-
-volumes:
-  pg-data:
+          record: true
+          parallel: true
+          group: 'End-to-end Tests'
+          spec: 'cypress/integration/**/*'
+    volumes:
+      pg-data:
