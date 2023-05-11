@@ -13,7 +13,7 @@ jobs:
       - name: Start Docker Compose
         run: docker-compose up -d
       - name: Cypress run
-        uses: cypress-io/github-actions@v5
+        uses: cypress-io/github-action@v5
         with: 
           start: wait-on http://localhost:3000 && npm run cypress:run
       - name: Stop Docker Compose
