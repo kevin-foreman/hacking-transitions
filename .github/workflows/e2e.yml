@@ -18,7 +18,6 @@ jobs:
 
       api:
         image: hacking-transitions-19/api
-        container_name: api-1
         restart: always
         build: ./api
         environment:
@@ -35,7 +34,6 @@ jobs:
 
       app:
         image: hacking-transitions-19/web
-        container_name: app-1
         restart: always
         build: ./client
         environment:
