@@ -1,65 +1,42 @@
-name: e2e testing
+name: CI
 
-on: push
-
+on: [push]
 
 jobs:
-  e2e:
-    name: End-to-end Tests
+  build-and-test:
     runs-on: ubuntu-latest
-    services:
-      database:
-        image: postgres:15-alpine
-        ports:
-          - 5432:5432
-        volumes:
-          - pg-data:/var/lib/postgresql/data
-          - ./api/src/db/migration.sql:/docker-entrypoint-initdb.d/migration.sql
-          - ./api/src/db/seed.sql:/docker-entrypoint-initdb.d/seed.sql
-      api:
-        image: hacking-transitions-19/api
-        restart: always
-        build:
-          context: ./api
-        environment:
-          DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database/${{ secrets.POSTGRES_DB }}
-          NODE_ENV: development
-          PORT: 80
-        depends_on:
-          - database
-        ports:
-          - ${{ secrets.API_PORT }}:80
-        volumes:
-          # This allows live reload inside a docker container by mapping your
-          # filesystem to the container's.
-          - ./api/src:/code/src
-        command: npm run dev
-      app:
-        image: hacking-transitions-19/web
-        restart: always
-        build:
-          context: ./client
-        environment:
-          API_URL: http://api
-          PORT: ${{ secrets.CLIENT_PORT }}
-        depends_on:
-          - api
-        ports:
-          - ${{ secrets.CLIENT_PORT }}:${{ secrets.CLIENT_PORT }}
-        volumes:
-          # This allows live reload inside a docker container by mapping your
-          # filesystem to the container's.
-          - ./client/src:/code/src
-        command: npm run dev
+
+    env:
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      API_PORT: ${{ secrets.API_PORT }}
+      CLIENT_PORT: ${{ secrets.CLIENT_PORT }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Run Cypress end-to-end tests
+
+      - name: Build and tag Docker images
+        run: |
+          docker build -t my-app-db:latest ./database
+          docker build -t my-app-api:latest ./api
+          docker build -t my-app-web:latest ./client
+          
+
+      - name: Start Docker Compose
+        run: |
+          docker-compose up -d
+
+      - name: Wait for services to start
+        run: sleep 10
+
+      - name: Run end-to-end tests
         uses: cypress-io/github-action@v2
         with:
-          record: true
-          parallel: true
-          group: 'End-to-end Tests'
-          spec: 'cypress/integration/**/*'
-    volumes:
-      pg-data:
+          start: npm run cy:run
+          wait-on: 'http://localhost:${{ secrets.CLIENT_PORT }}'
+          env:
+            CYPRESS_baseUrl: http://localhost:${{ secrets.CLIENT_PORT }}
+            CYPRESS_databaseUrl: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:${{ secrets.POSTGRES_PORT }}/${{ secrets.POSTGRES_DB }}
+
