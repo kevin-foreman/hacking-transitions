@@ -58,6 +58,9 @@ jobs:
         with:
           browser: chrome
           spec: cypress/integration/**/*.spec.js
+        env:
+          CYPRESS_baseUrl: http://localhost:${{ secrets.CLIENT_PORT }}
+          CYPRESS_apiUrl: http://localhost:${{ secrets.API_PORT }}
 
       - name: Cleanup
         run: docker-compose down
