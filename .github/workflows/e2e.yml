@@ -15,12 +15,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Copy .env file to working directory
-        run: cp $GITHUB_WORKSPACE/.env .env
-      - name: Build Docker images
-        run: docker-compose build
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y nodejs npm
+          npm install
+          npm install -g wait-on dotenv
       - name: Start Docker Compose
-        run: docker-compose up -d
+        run: |
+          # Load environment variables from .env file
+          set -a && . $GITHUB_WORKSPACE/.env && set +a
+          docker-compose up -d
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with: 
