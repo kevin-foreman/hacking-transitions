@@ -20,9 +20,7 @@ jobs:
 
       - name: Build and tag Docker images
         run: |
-          docker build -t my-app-db:latest ./database
-          docker build -t my-app-api:latest ./api
-          docker build -t my-app-web:latest ./client
+          docker compose up build
 
       - name: Start Docker Compose
         run: |
