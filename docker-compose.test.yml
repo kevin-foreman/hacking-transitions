@@ -17,6 +17,7 @@ services:
     container_name: api-1
     restart: always
     build: ./api
+    dockerfile: Dockerfile.test
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
       NODE_ENV: development
