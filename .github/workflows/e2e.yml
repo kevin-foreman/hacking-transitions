@@ -16,10 +16,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build and run Docker Compose
-        run: docker-compose --env-file ${{ github.workspace }}/.env up --build
+        run: docker-compose -f docker-compose.test.yml up --build
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with: 
-          start: wait-on http://localhost:${{ env.CLIENT_PORT }} && npm run cypress:run
+          start: wait-on http://localhost:${{ CLIENT_PORT }} && npm run cypress:run
       - name: Stop Docker Compose
         run: docker-compose down
