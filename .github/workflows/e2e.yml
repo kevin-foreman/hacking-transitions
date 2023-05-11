@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Set up Docker
+        uses: docker/setup-docker@v1
       - name: Build and run Docker Compose
         run: docker-compose -f docker-compose.test.yml up --build
       - name: Cypress run
