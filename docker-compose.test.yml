@@ -16,7 +16,9 @@ services:
     image: hacking-transitions-19/api
     container_name: api-1
     restart: always
-    build: ./api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
       NODE_ENV: development
@@ -32,7 +34,9 @@ services:
     image: hacking-transitions-19/web
     container_name: app-1
     restart: always
-    build: ./client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
     environment:
       API_URL: http://api
       PORT: ${CLIENT_PORT}
@@ -45,4 +49,5 @@ services:
     command: npm run dev
 volumes:
   pg-data:
+
 
