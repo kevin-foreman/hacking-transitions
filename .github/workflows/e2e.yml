@@ -10,6 +10,7 @@ jobs:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
       API_PORT: ${{ secrets.API_PORT }}
       CLIENT_PORT: ${{ secrets.CLIENT_PORT }}
 
@@ -22,7 +23,6 @@ jobs:
           docker build -t my-app-db:latest ./database
           docker build -t my-app-api:latest ./api
           docker build -t my-app-web:latest ./client
-          
 
       - name: Start Docker Compose
         run: |
@@ -39,4 +39,3 @@ jobs:
           env:
             CYPRESS_baseUrl: http://localhost:${{ secrets.CLIENT_PORT }}
             CYPRESS_databaseUrl: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:${{ secrets.POSTGRES_PORT }}/${{ secrets.POSTGRES_DB }}
-
