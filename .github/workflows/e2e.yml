@@ -2,32 +2,19 @@ name: e2e testing
 
 on: push
 
-env:
-  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-  POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-  CLIENT_PORT: ${{ secrets.CLIENT_PORT }}
-  API_PORT: ${{ secrets.API_PORT }}
-
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y nodejs npm
-          npm install
-          npm install -g wait-on dotenv
+      - name: Build Docker images
+        run: docker-compose -f docker-compose.test.yml build
       - name: Start Docker Compose
-        run: |
-          # Load environment variables from .env file
-          set -a && . $GITHUB_WORKSPACE/.env && set +a
-          docker-compose up -d
+        run: docker-compose -f docker-compose.test.yml up -d
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with: 
           start: wait-on http://localhost:${{ secrets.CLIENT_PORT }} && npm run cypress:run
       - name: Stop Docker Compose
-        run: docker-compose down
+        run: docker-compose -f docker-compose.test.yml down
