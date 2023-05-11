@@ -20,6 +20,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with: 
-          start: wait-on http://localhost:${{ CLIENT_PORT }} && npm run cypress:run
+          start: wait-on http://localhost:${{ secrets.CLIENT_PORT }} && npm run cypress:run
       - name: Stop Docker Compose
         run: docker-compose down
