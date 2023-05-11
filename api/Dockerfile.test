@@ -2,7 +2,7 @@
 # Un-comment out when running Heroku deploy
 FROM node:16-alpine
 WORKDIR /code
-COPY package*.json ./api
+COPY package*.json ./src/
 RUN npm ci
 COPY . .
 # RUN npm run heroku-postbuild
